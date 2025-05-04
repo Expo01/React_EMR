@@ -1,7 +1,10 @@
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
+} */
+
+/* i took this styling and but it globally in index.css
+so this file does not really need to be used  */
 

@@ -11,7 +11,7 @@ app.use(cors());
 
 // PostgreSQL connection setup
 const pool = new Pool({
-  user: 'ryan', // replace with your macOS username
+  user: 'chrisdailey', // replace with your macOS username
   host: 'localhost',
   database: 'patient_info',
   password: '', // leave blank if no password set
