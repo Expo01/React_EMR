@@ -22,7 +22,8 @@ function App() {
             key={patient.id}
             className="bg-blue-950 shadow p-4 rounded border"
           >
-            <p><strong>Name:</strong> {patient.name}</p>
+            <p><strong>Name:</strong> {patient.fname}</p>
+            <p><strong>Name:</strong> {patient.lname}</p>
             <p><strong>DOB:</strong> {patient.dob}</p>
             <p><strong>Phone:</strong> {patient.phone}</p>
           </li>

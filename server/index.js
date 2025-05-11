@@ -13,7 +13,7 @@ app.use(cors());
 const pool = new Pool({
   user: 'chrisdailey', // replace with your macOS username
   host: 'localhost',
-  database: 'patient_info',
+  database: 'patients',
   password: '', // leave blank if no password set
   port: 5432,
 });
