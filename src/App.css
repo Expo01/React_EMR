@@ -1,10 +1,13 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-} */
+/* resuable classes for styling */
 
-/* i took this styling and but it globally in index.css
-so this file does not really need to be used  */
+.main-burger {
+  @apply block px-4 py-2 hover:bg-blue-700 rounded;
+}
 
+.data-table-header{
+  @apply px-4 py-2 border-b border-gray-300;
+}
+
+.data-table-row{
+  @apply px-4 py-2 border-b border-gray-300;
+} 
