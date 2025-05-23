@@ -1,5 +1,15 @@
 import './App.css'
 import { useEffect, useState } from 'react'
+import Patients from './Patients'
+import Calendar from './Calendar'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+} from 'react-router-dom'  // installed in terminal via npm
+
 
 
 function NavDropdown() {
@@ -15,16 +25,10 @@ function NavDropdown() {
           <div className="absolute bg-blue-800 mt-2 rounded shadow-lg w-48 right-0 z-10 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-200">
             <ul className="flex flex-col p-2 space-y-1">
               <li>
-                <a href="#" className="main-burger">Calendar</a>
+                <Link to="/calendar" className="main-burger">Calendar</Link>
               </li>
               <li>
-                <a href="#" className="main-burger">Patients</a>
-              </li>
-              <li>
-                <a href="#" className="main-burger">Notes</a>
-              </li>
-              <li>
-                <a href="#" className="main-burger">Appointments</a>
+                <Link to="/patients" className="main-burger">Patients</Link>
               </li>
             </ul>
           </div>
@@ -37,16 +41,9 @@ function NavDropdown() {
 
 // 👇 Main App component
 function App() {
-  const [patients, setPatients] = useState([]) // setPatients() called in useEffect to update the state of patients[]
   const [notes, setNotes] = useState([])
   const [appointments, setAppointments] = useState([])
 
-  useEffect(() => {
-    fetch('http://localhost:3001/patients') // GET request to backend via port 3001 where backend lives
-      .then((res) => res.json()) // parse json from response
-      .then((data) => setPatients(data)) // store data in react state
-      .catch((err) => console.error('Error fetching patients:', err)) // handle any errors
-  }, []) // run the effect once the component mounts 
 
   useEffect(() => {
     fetch('http://localhost:3001/notes')
@@ -64,33 +61,17 @@ function App() {
 
   return (
     <>
-      <NavDropdown />
+      <Router>
+        <NavDropdown />
+        <Routes>
+          <Route path="/" element={<Navigate to="/patients" />} />
+          <Route path="/patients" element={<Patients />} />
+          <Route path="/calendar" element={<Calendar />} />
+        </Routes>
+      </Router>
       <main className="p-4">
 
-        {/* Patients Table */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-4">Patient List</h1>
-          <table className="min-w-full table-auto border border-gray-300 bg-blue-950 text-white text-left">
-            <thead className="bg-blue-900 text-gray-200">
-              <tr>
-                <th className="data-table-header">First Name</th>
-                <th className="data-table-header">Last Name</th>
-                <th className="data-table-header">DOB</th>
-                <th className="data-table-header">Phone</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((patient) => (
-                <tr key={patient.id} className="hover:bg-blue-800">
-                  <td className="data-table-row">{patient.fname}</td>
-                  <td className="data-table-row">{patient.lname}</td>
-                  <td className="data-table-row">{patient.dob.slice(0, 10)}</td>
-                  <td className="data-table-row">{patient.phone}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
 
         {/* Notes Table */}
         <div className="mb-8">

@@ -4,12 +4,12 @@ const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-const PORT = 3001;
+const PORT = 3001; //backend server port
 
 // Enable CORS for frontend access
 app.use(cors());
 
-// PostgreSQL connection setup
+// Pool obj manages connection to specified PostgreSQL DB
 const pool = new Pool({
   user: 'chrisdailey', 
   host: 'localhost',
