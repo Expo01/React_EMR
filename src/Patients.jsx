@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import PatientModal from './PatientModal'
+import PatientWindow from './PatientWindow'
 
 function Patients() {
   const [patients, setPatients] = useState([])
@@ -41,7 +41,7 @@ function Patients() {
       </table>
 
       {selectedPatient && (
-        <PatientModal patient={selectedPatient} onClose={() => setSelectedPatient(null)} />
+        <PatientWindow patient={selectedPatient} onClose={() => setSelectedPatient(null)} />
       )}
     </div>
   )
