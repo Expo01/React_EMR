@@ -1,60 +1,27 @@
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    IconButton,
-    Typography,
-    Paper,
-    Box
-  } from '@mui/material'
-  import CloseIcon from '@mui/icons-material/Close'
-  import Draggable from 'react-draggable'
-  import { useRef } from 'react'
-  
-  // Custom PaperComponent for draggable functionality
-  function PaperComponent(props) {
-    const nodeRef = useRef(null)
-  
-    return (
-      <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'} nodeRef={nodeRef}>
-        <Paper ref={nodeRef} {...props} />
-      </Draggable>
-    )
-  }
-  
-  function PatientWindow({ patient, onClose }) {
-    if (!patient) return null
-  
-    return (
-      <Dialog
-        open={!!patient}
-        onClose={onClose}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogTitle
-          style={{ cursor: 'move' }}
-          id="draggable-dialog-title"
-          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          {patient.fname} {patient.lname}
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-  
-        <DialogContent dividers>
-          <Box mb={2}>
-            <Typography variant="subtitle1"><strong>Date of Birth:</strong> {patient.dob}</Typography>
-            <Typography variant="subtitle1"><strong>Phone:</strong> {patient.phone}</Typography>
-          </Box>
-          <Typography color="text.secondary" fontStyle="italic">
-            More details coming soon...
-          </Typography>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-  
-  export default PatientWindow
-  
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+function PatientWindow() {
+  const { id } = useParams();
+  const [patient, setPatient] = useState(null);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/patients/${id}`)
+      .then(res => res.json())
+      .then(data => setPatient(data))
+      .catch(err => console.error(err));
+  }, [id]);
+
+  if (!patient) return <div className="text-white">Loading...</div>;
+
+  return (
+    <div className="p-4 bg-blue-950 text-white min-h-screen">
+      <h1 className="text-2xl font-bold mb-4">{patient.fname} {patient.lname}</h1>
+      <p><strong>Date of Birth:</strong> {patient.dob}</p>
+      <p><strong>Phone:</strong> {patient.phone}</p>
+      <div className="mt-6 italic text-gray-300">More patient details and actions will go here.</div>
+    </div>
+  );
+}
+
+export default PatientWindow;
