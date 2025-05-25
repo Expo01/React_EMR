@@ -29,6 +29,22 @@ app.get('/patients', async (req, res) => {
   }
 });
 
+// New endpoint to fetch a single patient by ID
+// required due to window.open() populating a completing new instance of the React app
+// which does not maintain memory from UseEffect/UseState on the main page
+app.get('/patients/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM patient_info WHERE patient_id = $1', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ message: 'Patient not found' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching patient by ID:', err);
+    res.status(500).send('Database error');
+  }
+});
+
+
 // API endpoint to get notes from notes table
 app.get('/notes', async(req,res) =>{
     try {

@@ -1,25 +1,33 @@
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 function PatientWindow() {
-  const { id } = useParams();
+  const { id } = useParams(); // get patient ID from URL
   const [patient, setPatient] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/patients/${id}`)
-      .then(res => res.json())
-      .then(data => setPatient(data))
-      .catch(err => console.error(err));
+    async function fetchPatient() {
+      try {
+        // Use full backend URL for fetching
+        const res = await fetch(`http://localhost:3001/patients/${id}`);
+        if (!res.ok) throw new Error('Failed to fetch patient');
+        const data = await res.json();
+        setPatient(data);
+      } catch (error) {
+        console.error('Error fetching patient:', error);
+      }
+    }
+    fetchPatient();
   }, [id]);
 
   if (!patient) return <div className="text-white">Loading...</div>;
 
   return (
-    <div className="p-4 bg-blue-950 text-white min-h-screen">
+    <div className="bg-blue-950 text-white p-6 rounded-lg shadow-lg min-h-screen">
       <h1 className="text-2xl font-bold mb-4">{patient.fname} {patient.lname}</h1>
-      <p><strong>Date of Birth:</strong> {patient.dob}</p>
+      <p><strong>DOB:</strong> {patient.dob}</p>
       <p><strong>Phone:</strong> {patient.phone}</p>
-      <div className="mt-6 italic text-gray-300">More patient details and actions will go here.</div>
+      <div className="mt-4 text-gray-300 italic">More patient data will go here...</div>
     </div>
   );
 }

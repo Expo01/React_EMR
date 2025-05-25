@@ -2,6 +2,7 @@ import './App.css'
 import { useEffect, useState } from 'react'
 import Patients from './Patients'
 import Calendar from './Calendar'
+import PatientWindow from './PatientWindow';
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,7 +10,6 @@ import {
   Link,
   Navigate,
 } from 'react-router-dom'  // installed in terminal via npm
-
 
 
 function NavDropdown() {
@@ -67,6 +67,7 @@ function App() {
           <Route path="/" element={<Navigate to="/patients" />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/patient/:id" element={<PatientWindow />} />
         </Routes>
       </Router>
       <main className="p-4">
