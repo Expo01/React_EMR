@@ -1,3 +1,5 @@
+//patients.jsx
+
 import { useEffect, useState } from 'react';
 
 function Patients() {
@@ -45,6 +47,7 @@ function Patients() {
       </table>
     </div>
   );
+
 }
 
 export default Patients;

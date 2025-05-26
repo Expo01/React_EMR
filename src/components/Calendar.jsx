@@ -1,4 +1,4 @@
-// src/Calendar.jsx
+// src/components/Calendar.jsx
 function Calendar() {
     return (
       <main className="p-4 text-white">

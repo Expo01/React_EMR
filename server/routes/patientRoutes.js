@@ -29,7 +29,7 @@ router.get('/patients', async (req, res) => {
 router.get('/patients/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('SELECT * FROM patient_info WHERE id = $1', [id]);
+    const result = await pool.query('SELECT * FROM patient_info WHERE patient_id = $1', [id]);
     if (result.rows.length === 0) return res.status(404).json({ message: 'Patient not found' });
     res.json(result.rows[0]);
   } catch (err) {
