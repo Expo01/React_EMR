@@ -1,4 +1,6 @@
-import './App.css'
+//app.jsx
+
+import './assets/App.css'
 import { useEffect, useState } from 'react'
 import Patients from './Patients'
 import Calendar from './Calendar'
