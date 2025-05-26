@@ -2,9 +2,9 @@
 
 import './assets/App.css'
 import { useEffect, useState } from 'react'
-import Patients from './Patients'
-import Calendar from './Calendar'
-import PatientWindow from './PatientWindow';
+import Patients from './components/Patients'
+import Calendar from './components/Calendar'
+import PatientWindow from './components/PatientWindow';
 import {
   BrowserRouter as Router,
   Routes,
