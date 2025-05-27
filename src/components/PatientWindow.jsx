@@ -27,7 +27,7 @@ function PatientWindow() {
   return (
     <div className="bg-blue-950 text-white p-6 rounded-lg shadow-lg min-h-screen">
       <h1 className="text-2xl font-bold mb-4">{patient.fname} {patient.lname}</h1>
-      <p><strong>DOB:</strong> {patient.dob}</p>
+      <p><strong>DOB:</strong> {patient.dob.slice(0,10)}</p>
       <p><strong>Phone:</strong> {patient.phone}</p>
       <div className="mt-4 text-gray-300 italic">More patient data will go here...</div>
     </div>

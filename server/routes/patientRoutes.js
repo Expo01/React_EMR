@@ -17,7 +17,7 @@ const pool = require('../db');
 // /patients
 router.get('/patients', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM patient_info LIMIT 3');
+    const result = await pool.query('SELECT * FROM patient_info ORDER BY lname ASC');  
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching patients:', err);
