@@ -38,25 +38,34 @@ router.get('/patients/:id', async (req, res) => {
   }
 });
 
-// /notes
-router.get('/notes', async (req, res) => {
+// note for specific pt
+router.get('/notes/:patientId', async (req, res) => {
+  const { patientId } = req.params;
   try {
-    const result = await pool.query('SELECT * FROM notes LIMIT 3');
+    const result = await pool.query(
+      'SELECT * FROM notes WHERE patient_id = $1 ORDER BY created_at DESC',
+      [patientId]
+    );
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching notes:', err);
-    res.status(500).send('Database error');
+    res.status(500).json({ error: err.message });
   }
 });
 
-// /appointments
-router.get('/appointments', async (req, res) => {
+// appointments for specific pt
+router.get('/appointments/:patientId', async (req, res) => { // :patientId serves as a 
+  //placeholder that i name. ':' is mandatory, the rest is best naming practice to match
+  // req.params const and sql query. Accepts patient_id info from selected record
+  const { patientId } = req.params; // req.params handles the dynamic portion of a URL 
+  // which is here is the unique patient id
   try {
-    const result = await pool.query('SELECT * FROM appointments LIMIT 3');
+    const result = await pool.query(
+      'SELECT * FROM appointments WHERE patient_id = $1 ORDER BY scheduled_date, scheduled_time',
+      [patientId] // that patient id extracted from the request is used in sql query
+    );
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching appointments:', err);
-    res.status(500).send('Database error');
+    res.status(500).json({ error: err.message });
   }
 });
 

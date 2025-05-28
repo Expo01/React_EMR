@@ -7,7 +7,7 @@ import PatientWindow from './components/PatientWindow';
 import NavDropDown from './components/NavDropDown';
 import PatientNotes from './components/PatientNotes';
 import PatientAppointments from './components/PatientAppointments';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // instal w/ npm
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // installed w/ npm
 
 // 👇 Main App component
 function App() {
@@ -26,8 +26,6 @@ function App() {
       </Router>
 
       <main className="p-4">
-        <PatientNotes />
-        <PatientAppointments />
       </main>
 
     </>
