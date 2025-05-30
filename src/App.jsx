@@ -8,6 +8,7 @@ import NavDropDown from './components/NavDropDown';
 import PatientNotes from './components/PatientNotes';
 import PatientAppointments from './components/PatientAppointments';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // installed w/ npm
+import NoteViewer from './components/NoteViewer';
 
 // 👇 Main App component
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/patients" element={<Patients />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/patient/:id" element={<PatientWindow />} />
+          <Route path="/note/:noteId" element={<NoteViewer />} />
         </Routes>
       </Router>
 

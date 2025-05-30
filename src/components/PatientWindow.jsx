@@ -35,7 +35,7 @@ function PatientWindow() {
 
     async function fetchNotes() {
       try {
-        const res = await fetch(`http://localhost:3001/notes/${id}`);
+        const res = await fetch(`http://localhost:3001/notes/${id}/notes`);
         if (!res.ok) throw new Error('Failed to fetch notes');
         const data = await res.json();
         setNotes(data);
@@ -82,9 +82,9 @@ function PatientWindow() {
               <ul className="space-y-2">
                 {appointments.map(appt => (
                   <p className="text-gray-300">
-                  <li key={appt.appointment_id} className="border-b border-gray-600 pb-2">
-                    {appt.scheduled_date.slice(0, 10)} @ {appt.scheduled_time.slice(0, 5)} with {appt.scheduled_therapist}
-                  </li>
+                    <li key={appt.appointment_id} className="border-b border-gray-600 pb-2">
+                      {appt.scheduled_date.slice(0, 10)} @ {appt.scheduled_time.slice(0, 5)} with {appt.scheduled_therapist}
+                    </li>
                   </p>
                 ))}
               </ul>
@@ -97,17 +97,20 @@ function PatientWindow() {
               <p className="text-gray-400">No notes found.</p>
             ) : (
               <ul className="space-y-4">
+                {/* // uses new API route to joined patients and notes tables */}
                 {notes.map(note => (
-                  <li key={note.note_id} className="border-b border-gray-600 pb-2">
-                    <p className="text-gray-300">
-                      {new Date(note.created_at).toLocaleString(undefined, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })} by {note.signed_therapist}
+                  <div
+                    key={note.note_id}
+                    className="mb-4 p-4 bg-blue-900 rounded cursor-pointer hover:bg-blue-800"
+                    onClick={() => window.open(`/note/${note.note_id}`, '_blank', 'width=800,height=600')}
+                  >
+                    <p className="text-sm text-gray-300">
+                      {new Date(note.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} by {note.signed_therapist}
                     </p>
-
-                  </li>
+                    <p className="text-gray-400 italic">Click to view full note</p>
+                  </div>
                 ))}
+
               </ul>
             )}
           </div>
