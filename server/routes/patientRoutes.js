@@ -38,8 +38,8 @@ router.get('/patients/:id', async (req, res) => {
   }
 });
 
-// note for specific pt
-router.get('/notes/:patientId', async (req, res) => {
+// for displaying signed therapist and date in the patients notes table
+router.get('/notes/:patientId/notes', async (req, res) => {
   const { patientId } = req.params;
   try {
     const result = await pool.query(
@@ -51,6 +51,29 @@ router.get('/notes/:patientId', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// route for displaying specific note content in IND window with pt IDing info
+// GET /notes/:noteId
+router.get('/notes/:noteId', async (req, res) => {
+  const { noteId } = req.params;
+  try {
+    const result = await pool.query(`
+      SELECT n.*, p.fname, p.lname, p.dob, p.phone
+      FROM notes n
+      JOIN patient_info p ON n.patient_id = p.patient_id
+      WHERE n.note_id = $1
+    `, [noteId]);
+
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Note not found' });
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch note' });
+  }
+});
+
+
 
 // appointments for specific pt
 router.get('/appointments/:patientId', async (req, res) => { // :patientId serves as a 
