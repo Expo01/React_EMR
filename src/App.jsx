@@ -4,8 +4,6 @@ import './assets/App.css'
 import Patients from './components/Patients'
 import Calendar from './components/Calendar'
 import PatientWindow from './components/PatientWindow';
-import PatientNotes from './components/PatientNotes';
-import PatientAppointments from './components/PatientAppointments';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // installed w/ npm
 import NoteViewer from './components/NoteViewer';
 import MainLayout from './components/layouts/MainLayout';

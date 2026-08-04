@@ -10,7 +10,9 @@ function PatientWindow() {
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
 
+
   useEffect(() => {
+    //fetches pt specific IDing info
     async function fetchPatient() {
       try {
         const res = await fetch(`http://localhost:3001/patients/${id}`);
@@ -22,6 +24,7 @@ function PatientWindow() {
       }
     }
 
+    //fetches pt specific appointment list
     async function fetchAppointments() {
       try {
         const res = await fetch(`http://localhost:3001/appointments/${id}`);
@@ -33,6 +36,7 @@ function PatientWindow() {
       }
     }
 
+    //fetches pt specific note list
     async function fetchNotes() {
       try {
         const res = await fetch(`http://localhost:3001/notes/${id}/notes`);
@@ -49,14 +53,19 @@ function PatientWindow() {
     fetchNotes();
   }, [id]);
 
+
+
   if (!patient) return <div className="text-white">Loading...</div>;
 
   return (
     <div className="bg-blue-950 text-white p-6 rounded-lg shadow-lg min-h-screen max-w-4xl mx-auto">
+     
+      {/* pt IDing info header */}
       <h1 className="text-2xl font-bold mb-4">{patient.fname} {patient.lname}</h1>
       <p><strong>DOB:</strong> {patient.dob.slice(0, 10)}</p>
       <p><strong>Phone:</strong> {patient.phone}</p>
 
+      {/* Appointments and Notes buttons */}
       <div className="mt-6">
         <button
           className={`mr-4 px-4 py-2 rounded ${view === 'appointments' ? 'bg-blue-800' : 'bg-gray-700'}`}
@@ -72,6 +81,9 @@ function PatientWindow() {
         </button>
       </div>
 
+{/* outer and inner ternary. outer teranry defines 'view' obj based on whether appointments 
+or notes button is clicked. inner ternarys ask whether the corresponding data is present or
+not and then will display content or default message  */}
       <div className="mt-4">
         {view === 'appointments' ? (
           <div>
