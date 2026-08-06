@@ -1,4 +1,4 @@
-/* resuable classes for styling */
+/* component stylesheet */
 
 .main-burger {
   @apply block px-4 py-2 hover:bg-blue-700 rounded;

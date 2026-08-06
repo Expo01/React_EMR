@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import NoteViewer from './components/NoteViewer';
 import MainLayout from './components/layouts/MainLayout';
 import MinimalLayout from './components/layouts/MinimalLayout';
+import NoteWriter from './components/NoteWriter';
 
 
 function App() {
@@ -22,12 +23,14 @@ function App() {
         
         {/* Routes without NavDropDown */}
         <Route path="/patient/:id"element={<MinimalLayout><PatientWindow /></MinimalLayout>}/>
-        <Route
-          path="/note/:noteId"
-          element={<MinimalLayout><NoteViewer /></MinimalLayout>}
-        />
+        <Route path="/note/:noteId"element={<MinimalLayout><NoteViewer /></MinimalLayout>}/>
+
+        {/* generate new note */}
+        <Route path="/patient/:patientId/note/new"element={<MinimalLayout><NoteWriter /></MinimalLayout>
+  }
+/>
       </Routes>
-    </Router>
+    </Router> 
   );
 }
 

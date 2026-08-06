@@ -1,5 +1,3 @@
-//patientwindow.jsx
-
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -10,6 +8,13 @@ function PatientWindow() {
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
 
+  const openNewNoteWindow = () => {
+    window.open(
+      `/patient/${id}/note/new`,
+      "_blank",
+      "width=800,height=700"
+    );
+  };
 
   useEffect(() => {
     //fetches pt specific IDing info
@@ -81,11 +86,10 @@ function PatientWindow() {
         </button>
       </div>
 
-{/* outer and inner ternary. outer teranry defines 'view' obj based on whether appointments 
-or notes button is clicked. inner ternarys ask whether the corresponding data is present or
-not and then will display content or default message  */}
       <div className="mt-4">
+        {/* appointments vs notes logic */}
         {view === 'appointments' ? (
+          // display appointments
           <div>
             <h2 className="text-xl font-semibold mb-2">Appointments</h2>
             {appointments.length === 0 ? (
@@ -103,17 +107,28 @@ not and then will display content or default message  */}
             )}
           </div>
         ) : (
+          // display notes
           <div>
-            <h2 className="text-xl font-semibold mb-2">Notes</h2>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-semibold">Notes</h2>
+              {/* button to populate new note window for writing */}
+              <button
+                type="button"
+                onClick={openNewNoteWindow}
+                className="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600"
+              >
+                New Note
+              </button>
+      </div>
             {notes.length === 0 ? (
               <p className="text-gray-400">No notes found.</p>
             ) : (
               <ul className="space-y-4">
-                {/* // uses new API route to joined patients and notes tables */}
                 {notes.map(note => (
                   <div
                     key={note.note_id}
                     className="mb-4 p-4 bg-blue-900 rounded cursor-pointer hover:bg-blue-800"
+                    // open selected note in new window using route in app.jsx
                     onClick={() => window.open(`/note/${note.note_id}`, '_blank', 'width=800,height=600')}
                   >
                     <p className="text-sm text-gray-300">

@@ -1,10 +1,9 @@
-//patients.jsx
-
 import { useEffect, useState } from 'react';
 
 function Patients() {
   const [patients, setPatients] = useState([]);
 
+  // retrieve all patients
   useEffect(() => {
     fetch('http://localhost:3001/patients')
       .then(res => res.json())
@@ -12,6 +11,7 @@ function Patients() {
       .catch(err => console.error('Error fetching patients:', err));
   }, []);
 
+  // url opened for patient/:id and routing handled by app.jsx for new patient window
   const openPatientInNewWindow = (id) => {
     const win = window.open(`/patient/${id}`, '_blank', 'width=900,height=700');
     if (win) win.focus();

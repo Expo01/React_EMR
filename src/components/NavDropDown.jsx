@@ -1,4 +1,3 @@
-// src/components/NavDropdown.jsx
 import { Link } from 'react-router-dom';
 
 function NavDropdown() {

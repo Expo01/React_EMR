@@ -4,13 +4,14 @@ const cors = require('cors');
 const app = express();
 const PORT = 3001; //backend server port
 
-// Enable COR middleware to access front end
+// Enable Cors middleware to access front end
 app.use(cors());
+
+app.use(express.json());
 
 
 // Routes
-const patientRoutes = require('./routes/patientRoutes'); // 'require' keyword effectively imports
-// patientRoutes.js, and since that file exports the router, we now have access to API endpoints
+const patientRoutes = require('./routes/patientRoutes'); 
 app.use(patientRoutes);
 
 // Start the server

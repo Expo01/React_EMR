@@ -1,18 +1,8 @@
-// the purpose of this file is to house all API endpoints related to patient information. 
-// it is contained in the 'routes' folder which will contain other files to organize 
-// API endpoints by category such as other endpoints for auth, etc. 
+// API endpoints 
 
-// routes/patientRoutes.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-
-
-// all API endpoints will huse the app express object to build the API endpoints. the parameter
-// of the db tabble/extension is passed '/tableName' which is then used when the pool object query
-// function attempts to query the DB table with the specified SQL statement and storeds into 
-//JSON (javascript object notation)
-// API endpoint to get patient info from patient_info table
 
 // /patients
 router.get('/patients', async (req, res) => {
@@ -38,7 +28,7 @@ router.get('/patients/:id', async (req, res) => {
   }
 });
 
-// for displaying signed therapist and date in the patients notes table
+// display signed therapist and date in the patients notes table
 router.get('/notes/:patientId/notes', async (req, res) => {
   const { patientId } = req.params;
   try {
@@ -52,8 +42,7 @@ router.get('/notes/:patientId/notes', async (req, res) => {
   }
 });
 
-// route for displaying specific note content in IND window with pt IDing info
-// GET /notes/:noteId
+// display specific note content
 router.get('/notes/:noteId', async (req, res) => {
   const { noteId } = req.params;
   try {
@@ -76,19 +65,43 @@ router.get('/notes/:noteId', async (req, res) => {
 
 
 // appointments for specific pt
-router.get('/appointments/:patientId', async (req, res) => { // :patientId serves as a 
-  //placeholder that i name. ':' is mandatory, the rest is best naming practice to match
-  // req.params const and sql query. Accepts patient_id info from selected record
-  const { patientId } = req.params; // req.params handles the dynamic portion of a URL 
-  // which is here is the unique patient id
+router.get('/appointments/:patientId', async (req, res) => { 
+  const { patientId } = req.params; 
   try {
     const result = await pool.query(
       'SELECT * FROM appointments WHERE patient_id = $1 ORDER BY scheduled_date, scheduled_time',
-      [patientId] // that patient id extracted from the request is used in sql query
+      [patientId] 
     );
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// create/save a new note
+router.post('/notes', async (req, res) => {
+  const { patient_id, content } = req.body;
+
+  if (!patient_id || !content?.trim()) {
+    return res.status(400).json({
+      error: 'patient_id and content are required',
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `
+      INSERT INTO notes (patient_id, content, created_at)
+      VALUES ($1, $2, NOW())
+      RETURNING *
+      `,
+      [patient_id, content.trim()]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating note:', err);
+    res.status(500).json({ error: 'Failed to create note' });
   }
 });
 

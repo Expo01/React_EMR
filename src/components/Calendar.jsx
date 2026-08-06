@@ -1,4 +1,3 @@
-// src/components/Calendar.jsx
 function Calendar() {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
