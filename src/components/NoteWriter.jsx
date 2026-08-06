@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
 
 function NoteWriter() {
   const { patientId } = useParams();
@@ -9,6 +10,7 @@ function NoteWriter() {
   const [status, setStatus] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+// data fetching
   useEffect(() => {
     const fetchPatient = async () => {
       try {
@@ -29,6 +31,16 @@ function NoteWriter() {
 
     fetchPatient();
   }, [patientId]);
+
+   // Access guard
+  const isBlocked = usePatientAccessGuard(patientId);
+    if (isBlocked) {
+        return (
+        <p className="p-6 text-red-400">
+            Another patient chart is already open. Close it before opening a different patient's chart.
+        </p>
+        );
+    }
 
   const saveNote = async () => {
     if (!content.trim()) {

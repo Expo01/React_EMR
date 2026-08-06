@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
 
 function NoteViewer() {
     const { noteId } = useParams();
@@ -19,6 +20,19 @@ function NoteViewer() {
         }
         fetchNote();
     }, [noteId]);
+
+    // The note response includes patient_id.
+    // Pass null initially; the guard waits until the note loads.
+    const isBlocked = usePatientAccessGuard(noteData?.patient_id);
+
+    // Conditional returns must come after all hooks.
+    if (isBlocked) {
+        return (
+        <p className="p-6 text-red-400">
+            Another patient chart is already open.
+        </p>
+        );
+    }
 
     if (!noteData) return <div className="text-white p-4">no data</div>;
 

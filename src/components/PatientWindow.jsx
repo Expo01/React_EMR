@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
 
 function PatientWindow() {
   const { id } = useParams(); // Get patient ID from URL
@@ -8,6 +9,7 @@ function PatientWindow() {
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
 
+  // helper functions
   const openNewNoteWindow = () => {
     window.open(
       `/patient/${id}/note/new`,
@@ -16,6 +18,7 @@ function PatientWindow() {
     );
   };
 
+  //data fetching
   useEffect(() => {
     //fetches pt specific IDing info
     async function fetchPatient() {
@@ -58,6 +61,27 @@ function PatientWindow() {
     fetchNotes();
   }, [id]);
 
+    // Access guard
+  const isBlocked = usePatientAccessGuard(id);
+    if (isBlocked) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-900">
+          <div className="max-w-md w-full p-6 bg-blue-950 rounded-lg shadow-lg border border-red-500 text-center">
+            <h2 className="text-xl font-semibold text-red-400 mb-4">
+              Access Denied
+            </h2>
+
+            <p className="text-gray-200">
+              Another patient chart is already open.
+            </p>
+
+            <p className="text-gray-400 mt-2 text-sm">
+              Close all windows for the current patient before opening a different patient.
+            </p>
+          </div>
+        </div>
+);
+    }
 
 
   if (!patient) return <div className="text-white">Loading...</div>;
