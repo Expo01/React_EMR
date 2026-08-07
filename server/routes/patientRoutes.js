@@ -105,4 +105,105 @@ router.post('/notes', async (req, res) => {
   }
 });
 
+// Get medications for one patient
+router.get('/medications/:patientId', async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM medications
+      WHERE patient_id = $1
+      ORDER BY medication_name ASC
+      `,
+      [patientId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching medications:', err);
+    res.status(500).json({ error: 'Failed to fetch medications' });
+  }
+});
+
+// Add one medication
+router.post('/medications', async (req, res) => {
+  const {
+    patient_id,
+    medication_name,
+    strength,
+    dose,
+    dosage_form,
+    route,
+    frequency,
+    instructions,
+  } = req.body;
+
+  if (!patient_id || !medication_name?.trim()) {
+    return res.status(400).json({
+      error: 'patient_id and medication_name are required',
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `
+      INSERT INTO medications (
+        patient_id,
+        medication_name,
+        strength,
+        dose,
+        dosage_form,
+        route,
+        frequency,
+        instructions
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *
+      `,
+      [
+        patient_id,
+        medication_name.trim(),
+        strength || null,
+        dose || null,
+        dosage_form || null,
+        route || null,
+        frequency || null,
+        instructions || null,
+      ]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating medication:', err);
+    res.status(500).json({ error: 'Failed to create medication' });
+  }
+});
+
+// Delete one medication
+router.delete('/medications/:medicationId', async (req, res) => {
+  const { medicationId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      DELETE FROM medications
+      WHERE medication_id = $1
+      RETURNING *
+      `,
+      [medicationId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Medication not found' });
+    }
+
+    res.json({ message: 'Medication deleted' });
+  } catch (err) {
+    console.error('Error deleting medication:', err);
+    res.status(500).json({ error: 'Failed to delete medication' });
+  }
+});
+
 module.exports = router;

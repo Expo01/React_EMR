@@ -9,6 +9,7 @@ import NoteViewer from './components/NoteViewer';
 import MainLayout from './components/layouts/MainLayout';
 import MinimalLayout from './components/layouts/MinimalLayout';
 import NoteWriter from './components/NoteWriter';
+import MedicationWriter from './components/MedicationWriter';
 
 
 function App() {
@@ -26,9 +27,9 @@ function App() {
         <Route path="/note/:noteId"element={<MinimalLayout><NoteViewer /></MinimalLayout>}/>
 
         {/* generate new note */}
-        <Route path="/patient/:patientId/note/new"element={<MinimalLayout><NoteWriter /></MinimalLayout>
-  }
-/>
+        <Route path="/patient/:patientId/note/new"element={<MinimalLayout><NoteWriter /></MinimalLayout>}/>
+        {/* edit medications */}
+        <Route path="/patient/:patientId/medications/edit"element={<MinimalLayout><MedicationWriter /></MinimalLayout>}/>
       </Routes>
     </Router> 
   );

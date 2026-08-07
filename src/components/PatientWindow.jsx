@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
+//patientappointments and patientnotes jsx files to be extracted later as is medicationlist
+import MedicationList from './MedicationList';
 
 function PatientWindow() {
   const { id } = useParams(); // Get patient ID from URL
@@ -8,6 +10,7 @@ function PatientWindow() {
   const [view, setView] = useState('appointments'); // 'appointments' or 'notes'
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
+  const [medications, setMedications] = useState([]);
 
   // helper functions
   const openNewNoteWindow = () => {
@@ -56,9 +59,26 @@ function PatientWindow() {
       }
     }
 
+    async function fetchMedications() {
+      try {
+        const res = await fetch(
+          `http://localhost:3001/medications/${id}`
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch medications');
+        }
+
+        setMedications(await res.json());
+      } catch (error) {
+        console.error('Error fetching medications:', error);
+      }
+    }
+
     fetchPatient();
     fetchAppointments();
     fetchNotes();
+    fetchMedications();
   }, [id]);
 
     // Access guard
@@ -86,56 +106,73 @@ function PatientWindow() {
 
   if (!patient) return <div className="text-white">Loading...</div>;
 
-  return (
+    return (
     <div className="bg-blue-950 text-white p-6 rounded-lg shadow-lg min-h-screen max-w-4xl mx-auto">
-     
-      {/* pt IDing info header */}
-      <h1 className="text-2xl font-bold mb-4">{patient.fname} {patient.lname}</h1>
+
+      {/* Patient header */}
+      <h1 className="text-2xl font-bold mb-4">
+        {patient.fname} {patient.lname}
+      </h1>
+
       <p><strong>DOB:</strong> {patient.dob.slice(0, 10)}</p>
       <p><strong>Phone:</strong> {patient.phone}</p>
 
-      {/* Appointments and Notes buttons */}
-      <div className="mt-6">
+      {/* Navigation */}
+      <div className="mt-6 flex gap-4">
         <button
-          className={`mr-4 px-4 py-2 rounded ${view === 'appointments' ? 'bg-blue-800' : 'bg-gray-700'}`}
+          className={`px-4 py-2 rounded ${view === 'appointments' ? 'bg-blue-800' : 'bg-gray-700'}`}
           onClick={() => setView('appointments')}
         >
           Appointments
         </button>
+
         <button
           className={`px-4 py-2 rounded ${view === 'notes' ? 'bg-blue-800' : 'bg-gray-700'}`}
           onClick={() => setView('notes')}
         >
           Notes
         </button>
+
+        <button
+          className={`px-4 py-2 rounded ${view === 'medications' ? 'bg-blue-800' : 'bg-gray-700'}`}
+          onClick={() => setView('medications')}
+        >
+          Medications
+        </button>
       </div>
 
-      <div className="mt-4">
-        {/* appointments vs notes logic */}
-        {view === 'appointments' ? (
-          // display appointments
+      <div className="mt-6">
+
+        {/* Appointments */}
+        {view === 'appointments' && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Appointments</h2>
+
             {appointments.length === 0 ? (
               <p className="text-gray-400">No appointments found.</p>
             ) : (
               <ul className="space-y-2">
-                {appointments.map(appt => (
-                  <p className="text-gray-300">
-                    <li key={appt.appointment_id} className="border-b border-gray-600 pb-2">
-                      {appt.scheduled_date.slice(0, 10)} @ {appt.scheduled_time.slice(0, 5)} with {appt.scheduled_therapist}
-                    </li>
-                  </p>
+                {appointments.map((appt) => (
+                  <li
+                    key={appt.appointment_id}
+                    className="border-b border-gray-600 pb-2 text-gray-300"
+                  >
+                    {appt.scheduled_date.slice(0, 10)} @{' '}
+                    {appt.scheduled_time.slice(0, 5)} with{' '}
+                    {appt.scheduled_therapist}
+                  </li>
                 ))}
               </ul>
             )}
           </div>
-        ) : (
-          // display notes
+        )}
+
+        {/* Notes */}
+        {view === 'notes' && (
           <div>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold">Notes</h2>
-              {/* button to populate new note window for writing */}
+
               <button
                 type="button"
                 onClick={openNewNoteWindow}
@@ -143,29 +180,50 @@ function PatientWindow() {
               >
                 New Note
               </button>
-      </div>
+            </div>
+
             {notes.length === 0 ? (
               <p className="text-gray-400">No notes found.</p>
             ) : (
-              <ul className="space-y-4">
-                {notes.map(note => (
+              <div className="space-y-4">
+                {notes.map((note) => (
                   <div
                     key={note.note_id}
-                    className="mb-4 p-4 bg-blue-900 rounded cursor-pointer hover:bg-blue-800"
-                    // open selected note in new window using route in app.jsx
-                    onClick={() => window.open(`/note/${note.note_id}`, '_blank', 'width=800,height=600')}
+                    className="p-4 bg-blue-900 rounded cursor-pointer hover:bg-blue-800"
+                    onClick={() =>
+                      window.open(
+                        `/note/${note.note_id}`,
+                        '_blank',
+                        'width=800,height=600'
+                      )
+                    }
                   >
                     <p className="text-sm text-gray-300">
-                      {new Date(note.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} by {note.signed_therapist}
+                      {new Date(note.created_at).toLocaleString(undefined, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}{' '}
+                      by {note.signed_therapist}
                     </p>
-                    <p className="text-gray-400 italic">Click to view full note</p>
+
+                    <p className="text-gray-400 italic">
+                      Click to view full note
+                    </p>
                   </div>
                 ))}
-
-              </ul>
+              </div>
             )}
           </div>
         )}
+
+        {/* Medications */}
+        {view === 'medications' && (
+          <MedicationList
+            medications={medications}
+            patientId={id}
+          />
+        )}
+
       </div>
     </div>
   );
