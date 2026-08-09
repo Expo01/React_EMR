@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
 //patientappointments and patientnotes jsx files to be extracted later as is medicationlist
 import MedicationList from './MedicationList';
+import ClinicalDocuments from './ClinicalDocuments';
 
 function PatientWindow() {
   const { id } = useParams(); // Get patient ID from URL
@@ -11,6 +12,7 @@ function PatientWindow() {
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
   const [medications, setMedications] = useState([]);
+  const [documents, setDocuments] = useState([]);
 
   // helper functions
   const openNewNoteWindow = () => {
@@ -75,10 +77,28 @@ function PatientWindow() {
       }
     }
 
+    async function fetchDocuments() {
+      try {
+        const res = await fetch(
+          `http://localhost:3001/clinical-documents/${id}`
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch clinical documents');
+        }
+
+        const data = await res.json();
+        setDocuments(data);
+      } catch (error) {
+        console.error('Error fetching clinical documents:', error);
+      }
+    }
+
     fetchPatient();
     fetchAppointments();
     fetchNotes();
     fetchMedications();
+    fetchDocuments();
   }, [id]);
 
     // Access guard
@@ -138,6 +158,13 @@ function PatientWindow() {
           onClick={() => setView('medications')}
         >
           Medications
+        </button>
+
+        <button
+          className={`px-4 py-2 rounded ${view === 'documents'? 'bg-blue-800': 'bg-gray-700'}`}
+          onClick={() => setView('documents')}
+        >
+          Clinical Documents
         </button>
       </div>
 
@@ -220,6 +247,14 @@ function PatientWindow() {
         {view === 'medications' && (
           <MedicationList
             medications={medications}
+            patientId={id}
+          />
+        )}
+
+        {/* clinical docs */}
+        {view === 'documents' && (
+          <ClinicalDocuments
+            documents={documents}
             patientId={id}
           />
         )}

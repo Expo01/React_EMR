@@ -10,6 +10,7 @@ import MainLayout from './components/layouts/MainLayout';
 import MinimalLayout from './components/layouts/MinimalLayout';
 import NoteWriter from './components/NoteWriter';
 import MedicationWriter from './components/MedicationWriter';
+import ClinicalDocumentViewer from './components/ClinicalDocumentViewer';
 
 
 function App() {
@@ -30,6 +31,9 @@ function App() {
         <Route path="/patient/:patientId/note/new"element={<MinimalLayout><NoteWriter /></MinimalLayout>}/>
         {/* edit medications */}
         <Route path="/patient/:patientId/medications/edit"element={<MinimalLayout><MedicationWriter /></MinimalLayout>}/>
+        <Route path="/patient/:patientId/document/:documentId"element={<MinimalLayout><ClinicalDocumentViewer /></MinimalLayout>
+  }
+/>
       </Routes>
     </Router> 
   );

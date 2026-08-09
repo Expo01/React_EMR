@@ -207,3 +207,51 @@ router.delete('/medications/:medicationId', async (req, res) => {
 });
 
 module.exports = router;
+
+// retrieve clinical docs for a patient
+router.get("/clinical-documents/:patientId", async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const result = await pool.query(
+      `SELECT *
+       FROM clinical_documents
+       WHERE patient_id = $1
+       ORDER BY uploaded_at DESC`,
+      [patientId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve clinical documents" });
+  }
+});
+
+// Retrieve one clinical document
+router.get("/clinical-documents/document/:documentId", async (req, res) => {
+  try {
+    const { documentId } = req.params;
+
+    const result = await pool.query(
+      `SELECT *
+       FROM clinical_documents
+       WHERE document_id = $1`,
+      [documentId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Clinical document not found"
+      });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to retrieve clinical document"
+    });
+  }
+});
