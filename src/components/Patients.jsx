@@ -13,7 +13,7 @@ function Patients() {
 
   // url opened for patient/:id and routing handled by app.jsx for new patient window
   const openPatientInNewWindow = (id) => {
-    const win = window.open(`/patient/${id}`, '_blank', 'width=900,height=700');
+    window.open(`/patient/${id}`,'_blank','width=680,height=750');
     if (win) win.focus();
     else alert('Popup blocked. Please allow popups for this site.');
   };
