@@ -9,51 +9,72 @@ function MedicationList({ medications, patientId }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Medications</h2>
+      <div className="relative mb-3">
+        <h2 className="emr-section-title mb-0">
+          Medications
+        </h2>
 
         <button
           type="button"
           onClick={openMedicationWriter}
-          className="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600"
+          className="emr-primary-button absolute right-0 top-1/2 -translate-y-1/2 text-sm"
         >
           Edit Medications
         </button>
       </div>
 
       {medications.length === 0 ? (
-        <p className="text-gray-400">No medications found.</p>
+        <p className="emr-empty-message">
+          No medications found.
+        </p>
       ) : (
-        <ul className="space-y-3">
-          {medications.map((medication) => (
-            <li
-              key={medication.medication_id}
-              className="p-4 bg-blue-900 rounded"
-            >
-              <p className="font-semibold">
-                {medication.medication_name}
-                {medication.strength && ` — ${medication.strength}`}
-              </p>
+        <div className="emr-table-container">
+          <table className="emr-table">
+            <thead className="emr-table-header">
+              <tr>
+                <th className="emr-table-heading">Medication</th>
+                <th className="emr-table-heading">Strength</th>
+                <th className="emr-table-heading">Dose</th>
+                <th className="emr-table-heading">Form</th>
+                <th className="emr-table-heading">Route</th>
+                <th className="emr-table-heading">Frequency</th>
+              </tr>
+            </thead>
 
-              <p className="text-gray-300">
-                {[
-                  medication.dose,
-                  medication.dosage_form,
-                  medication.route,
-                  medication.frequency,
-                ]
-                  .filter(Boolean)
-                  .join(' | ')}
-              </p>
+            <tbody>
+              {medications.map((medication) => (
+                <tr
+                  key={medication.medication_id}
+                  className="emr-table-row"
+                >
+                  <td className="emr-table-cell font-medium">
+                    {medication.medication_name}
+                  </td>
 
-              {medication.instructions && (
-                <p className="text-gray-400 mt-1">
-                  {medication.instructions}
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
+                  <td className="emr-table-cell">
+                    {medication.strength || '—'}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {medication.dose || '—'}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {medication.dosage_form || '—'}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {medication.route || '—'}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {medication.frequency || '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -10,7 +10,7 @@ function NoteWriter() {
   const [status, setStatus] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-// data fetching
+  // data fetching
   useEffect(() => {
     const fetchPatient = async () => {
       try {
@@ -32,15 +32,28 @@ function NoteWriter() {
     fetchPatient();
   }, [patientId]);
 
-   // Access guard
+  // Access guard
   const isBlocked = usePatientAccessGuard(patientId);
-    if (isBlocked) {
-        return (
-        <p className="p-6 text-red-400">
-            Another patient chart is already open. Close it before opening a different patient's chart.
-        </p>
-        );
-    }
+
+  if (isBlocked) {
+    return (
+      <div className="emr-page flex items-center justify-center">
+        <div className="emr-workspace max-w-md text-center border border-emr-border">
+          <h2 className="text-xl font-semibold text-emr-error mb-4">
+            Access Denied
+          </h2>
+
+          <p className="text-emr-text">
+            Another patient chart is already open.
+          </p>
+
+          <p className="emr-secondary-text mt-2 text-sm">
+            Close all windows for the current patient before opening a different patient's chart.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const saveNote = async () => {
     if (!content.trim()) {
@@ -67,9 +80,9 @@ function NoteWriter() {
         throw new Error('Unable to save note.');
       }
 
-      const savedNote = await response.json();
+      await response.json();
 
-      setStatus(`Note draft saved successfully.`);
+      setStatus('Note draft saved successfully.');
       setContent('');
     } catch (error) {
       setStatus(error.message);
@@ -79,48 +92,62 @@ function NoteWriter() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        <header className="sticky top-0 z-10 bg-gray-900 border-b border-gray-600 pb-4 mb-4">
-          <h1 className="text-2xl font-semibold">New Note</h1>
+    <div className="emr-page">
+      <div className="emr-workspace min-h-[calc(100vh-1.5rem)]">
+
+        {/* sticky header of pt IDing info */}
+        <div className="emr-patient-header border-b border-emr-border">
+          <h1 className="text-2xl font-bold text-emr-text">
+            New Note
+          </h1>
 
           {patient ? (
-            <div className="mt-2 text-gray-300">
-              <p>
-                <strong>Patient:</strong> {patient.fname} {patient.lname}
+            <div className="mt-2 text-emr-text">
+              <p className="font-semibold">
+                {patient.fname} {patient.lname}
               </p>
-              <p>
+
+              <p className="mt-1">
                 <strong>DOB:</strong>{' '}
                 {patient.dob ? patient.dob.slice(0, 10) : 'Not available'}
-              </p>
-              <p>
-                <strong>Phone:</strong> {patient.phone || 'Not available'}
+                <span className="mx-3 text-emr-border">|</span>
+                <strong>Phone:</strong>{' '}
+                {patient.phone || 'Not available'}
               </p>
             </div>
           ) : (
-            <p className="mt-2 text-gray-400">Loading patient information...</p>
+            <p className="emr-secondary-text mt-2">
+              Loading patient information...
+            </p>
           )}
-        </header>
-
-        <textarea
-          value={content}
-          onChange={(event) => setContent(event.target.value)}
-          placeholder="Enter note..."
-          className="w-full min-h-[400px] p-4 bg-gray-800 border border-gray-600 rounded text-white resize-y focus:outline-none focus:border-blue-500"
-        />
-
-        <div className="flex items-center gap-4 mt-4">
-          <button
-            type="button"
-            onClick={saveNote}
-            disabled={isSaving}
-            className="px-4 py-2 bg-blue-700 rounded hover:bg-blue-600 disabled:opacity-50"
-          >
-            {isSaving ? 'Saving...' : 'Save Draft'}
-          </button>
-
-          {status && <p className="text-gray-300">{status}</p>}
         </div>
+
+        <div className="mt-6">
+          <textarea
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            placeholder="Enter note..."
+            className="w-full min-h-[400px] p-4 bg-emr-surface border border-emr-border rounded text-emr-text resize-y focus:outline-none focus:border-emr-primary"
+          />
+
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              type="button"
+              onClick={saveNote}
+              disabled={isSaving}
+              className="emr-primary-button disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save Draft'}
+            </button>
+
+            {status && (
+              <p className="emr-secondary-text">
+                {status}
+              </p>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

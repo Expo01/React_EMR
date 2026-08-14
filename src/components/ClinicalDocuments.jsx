@@ -11,37 +11,49 @@ function ClinicalDocuments({ documents, patientId }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">
+      <h2 className="emr-section-title">
         Clinical Documents
       </h2>
 
       {documents.length === 0 ? (
-        <p className="text-gray-400">
+        <p className="emr-empty-message">
           No clinical documents found.
         </p>
       ) : (
-        <div className="space-y-3">
-          {documents.map((document) => (
-            <div
-              key={document.document_id}
-              onClick={() => openDocument(document.document_id)}
-              className="p-4 bg-blue-900 rounded cursor-pointer hover:bg-blue-800"
-            >
-              <p className="font-semibold">
-                {document.document_type}
-              </p>
+        <div className="emr-table-container">
+          <table className="emr-table">
+            <thead className="emr-table-header">
+              <tr>
+                <th className="emr-table-heading">Document Type</th>
+                <th className="emr-table-heading">Document Name</th>
+                <th className="emr-table-heading">Uploaded</th>
+              </tr>
+            </thead>
 
-              <p className="text-gray-300">
-                {document.document_name}
-              </p>
+            <tbody>
+              {documents.map((document) => (
+                <tr
+                  key={document.document_id}
+                  onClick={() => openDocument(document.document_id)}
+                  className="emr-table-row cursor-pointer"
+                >
+                  <td className="emr-table-cell">
+                    {document.document_type}
+                  </td>
 
-              {document.uploaded_at && (
-                <p className="text-sm text-gray-400">
-                  {new Date(document.uploaded_at).toLocaleString()}
-                </p>
-              )}
-            </div>
-          ))}
+                  <td className="emr-table-cell text-emr-primary font-medium">
+                    {document.document_name}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {document.uploaded_at
+                      ? new Date(document.uploaded_at).toLocaleDateString()
+                      : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

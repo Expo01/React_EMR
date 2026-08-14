@@ -13,44 +13,84 @@ function Patients() {
 
   // url opened for patient/:id and routing handled by app.jsx for new patient window
   const openPatientInNewWindow = (id) => {
-    window.open(`/patient/${id}`,'_blank','width=680,height=750');
-    if (win) win.focus();
-    else alert('Popup blocked. Please allow popups for this site.');
+    const win = window.open(
+      `/patient/${id}`,
+      '_blank',
+      'width=680,height=750'
+    );
+
+    if (win) {
+      win.focus();
+    } else {
+      alert('Popup blocked. Please allow popups for this site.');
+    }
   };
 
   return (
-    <div className="text-white p-4">
-      <h1 className="text-2xl font-bold mb-4">Patient List</h1>
-      <div className="max-h-[400px] overflow-y-auto border border-gray-300 rounded">
-        <table className="min-w-full table-auto bg-blue-950 text-white text-left">
-          <thead className="bg-blue-900 text-gray-200 sticky top-0">
-            <tr>
-              <th className="data-table-header">First Name</th>
-              <th className="data-table-header">Last Name</th>
-              <th className="data-table-header">DOB</th>
-              <th className="data-table-header">Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.map((patient) => (
-              <tr
-                key={patient.patient_id}
-                className="hover:bg-blue-700 cursor-pointer"
-                onClick={() => openPatientInNewWindow(patient.patient_id)}
-              >
-                <td className="data-table-row">{patient.fname}</td>
-                <td className="data-table-row">{patient.lname}</td>
-                <td className="data-table-row">{patient.dob.slice(0, 10)}</td>
-                <td className="data-table-row">{patient.phone}</td>
+    <div className="emr-workspace">
+      <h1 className="text-2xl font-bold text-emr-text mb-6">
+        Patient List
+      </h1>
+
+      {patients.length === 0 ? (
+        <p className="emr-empty-message">
+          No patients found.
+        </p>
+      ) : (
+        <div className="emr-table-container">
+          <table className="emr-table">
+            <thead className="emr-table-header">
+              <tr>
+                <th className="emr-table-heading">
+                  First Name
+                </th>
+
+                <th className="emr-table-heading">
+                  Last Name
+                </th>
+
+                <th className="emr-table-heading">
+                  DOB
+                </th>
+
+                <th className="emr-table-heading">
+                  Phone
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              {patients.map((patient) => (
+                <tr
+                  key={patient.patient_id}
+                  className="emr-table-row cursor-pointer"
+                  onClick={() =>
+                    openPatientInNewWindow(patient.patient_id)
+                  }
+                >
+                  <td className="emr-table-cell">
+                    {patient.fname}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {patient.lname}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {patient.dob.slice(0, 10)}
+                  </td>
+
+                  <td className="emr-table-cell">
+                    {patient.phone}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
-  
-
 }
 
 export default Patients;

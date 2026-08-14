@@ -8,7 +8,7 @@ import ClinicalDocuments from './ClinicalDocuments';
 function PatientWindow() {
   const { id } = useParams(); // Get patient ID from URL
   const [patient, setPatient] = useState(null);
-  const [view, setView] = useState('appointments'); // 'appointments' or 'notes'
+  const [view, setView] = useState('appointments'); // appointments, notes, medications, or documents
   const [appointments, setAppointments] = useState([]);
   const [notes, setNotes] = useState([]);
   const [medications, setMedications] = useState([]);
@@ -107,17 +107,17 @@ function PatientWindow() {
 
   if (isBlocked) {
     return (
-      <div className="w-full bg-[#DCE7E7] text-[#183234] p-3">
-        <div className="w-full bg-[#F4F8F8] rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-[#AD4E4E] mb-4">
+      <div className="emr-page flex items-center justify-center">
+        <div className="emr-workspace max-w-md text-center border border-emr-border">
+          <h2 className="text-xl font-semibold text-emr-error mb-4">
             Access Denied
           </h2>
 
-          <p className="text-[#183234]">
+          <p className="text-emr-text">
             Another patient chart is already open.
           </p>
 
-          <p className="text-[#536C6E] mt-2 text-sm">
+          <p className="emr-secondary-text mt-2 text-sm">
             Close all windows for the current patient before opening a different patient.
           </p>
         </div>
@@ -127,26 +127,26 @@ function PatientWindow() {
 
   if (!patient) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#DCE7E7] text-[#183234]">
+      <div className="emr-page flex items-center justify-center">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#DCE7E7] text-[#183234] p-4">
+    <div className="emr-page">
 
-      <div className="min-h-[calc(100vh-2rem)] w-full bg-[#F4F8F8] rounded-lg shadow-sm p-6">
+      <div className="emr-workspace min-h-[calc(100vh-1.5rem)]">
 
         {/* Patient header */}
-        <div className="sticky top-0 z-10 bg-[#F4F8F8] text-center pb-4">
-          <h1 className="text-2xl font-bold text-[#183234]">
+        <div className="emr-patient-header">
+          <h1 className="text-2xl font-bold text-emr-text">
             {patient.fname} {patient.lname}
           </h1>
 
-          <p className="mt-2 text-[#183234]">
+          <p className="mt-2 text-emr-text">
             <strong>DOB:</strong> {patient.dob.slice(0, 10)}
-            <span className="mx-3 text-[#97B5B5]">|</span>
+            <span className="mx-3 text-emr-border">|</span>
             <strong>Phone:</strong> {patient.phone}
           </p>
         </div>
@@ -154,44 +154,44 @@ function PatientWindow() {
         {/* Navigation */}
         <div className="mt-6 flex gap-4">
           <button
-            className={`px-4 py-2 rounded ${
+            className={
               view === 'appointments'
-                ? 'bg-[#0F777A] text-white'
-                : 'bg-[#B9D0D0] text-[#183234] hover:bg-[#A8C4C4]'
-            }`}
+                ? 'emr-nav-button-active'
+                : 'emr-nav-button'
+            }
             onClick={() => setView('appointments')}
           >
             Appointments
           </button>
 
           <button
-            className={`px-4 py-2 rounded ${
+            className={
               view === 'notes'
-                ? 'bg-[#0F777A] text-white'
-                : 'bg-[#B9D0D0] text-[#183234] hover:bg-[#A8C4C4]'
-            }`}
+                ? 'emr-nav-button-active'
+                : 'emr-nav-button'
+            }
             onClick={() => setView('notes')}
           >
             Notes
           </button>
 
           <button
-            className={`px-4 py-2 rounded ${
+            className={
               view === 'medications'
-                ? 'bg-[#0F777A] text-white'
-                : 'bg-[#B9D0D0] text-[#183234] hover:bg-[#A8C4C4]'
-            }`}
+                ? 'emr-nav-button-active'
+                : 'emr-nav-button'
+            }
             onClick={() => setView('medications')}
           >
             Medications
           </button>
 
           <button
-            className={`px-4 py-2 rounded ${
+            className={
               view === 'documents'
-                ? 'bg-[#0F777A] text-white'
-                : 'bg-[#B9D0D0] text-[#183234] hover:bg-[#A8C4C4]'
-            }`}
+                ? 'emr-nav-button-active'
+                : 'emr-nav-button'
+            }
             onClick={() => setView('documents')}
           >
             Clinical Documents
@@ -200,59 +200,59 @@ function PatientWindow() {
 
         <div className="mt-6">
 
-        {/* Appointments */}
-        {view === 'appointments' && (
-          <div>
-            <h2 className="text-xl font-semibold mb-3 text-center text-[#183234]">
-              Appointments
-            </h2>
+          {/* Appointments */}
+          {view === 'appointments' && (
+            <div>
+              <h2 className="emr-section-title">
+                Appointments
+              </h2>
 
-            {appointments.length === 0 ? (
-              <p className="text-center text-[#536C6E]">
-                No appointments found.
-              </p>
-            ) : (
-              <div className="max-h-[430px] overflow-y-auto border border-[#97B5B5] rounded-lg bg-[#F4F8F8]">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-[#B9D0D0] text-[#183234]">
-                    <tr>
-                      <th className="px-4 py-3 text-center font-semibold">Date</th>
-                      <th className="px-4 py-3 text-center font-semibold">Time</th>
-                      <th className="px-4 py-3 text-center font-semibold">Therapist</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {appointments.map((appt) => (
-                      <tr
-                        key={appt.appointment_id}
-                        className="border-t border-[#97B5B5] hover:bg-[#C9E0E0]"
-                      >
-                        <td className="px-4 py-3">
-                          {appt.scheduled_date.slice(0, 10)}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          {appt.scheduled_time.slice(0, 5)}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          {appt.scheduled_therapist}
-                        </td>
+              {appointments.length === 0 ? (
+                <p className="emr-empty-message">
+                  No appointments found.
+                </p>
+              ) : (
+                <div className="emr-table-container">
+                  <table className="emr-table">
+                    <thead className="emr-table-header">
+                      <tr>
+                        <th className="emr-table-heading">Date</th>
+                        <th className="emr-table-heading">Time</th>
+                        <th className="emr-table-heading">Therapist</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+                    </thead>
+
+                    <tbody>
+                      {appointments.map((appt) => (
+                        <tr
+                          key={appt.appointment_id}
+                          className="emr-table-row"
+                        >
+                          <td className="emr-table-cell">
+                            {appt.scheduled_date.slice(0, 10)}
+                          </td>
+
+                          <td className="emr-table-cell">
+                            {appt.scheduled_time.slice(0, 5)}
+                          </td>
+
+                          <td className="emr-table-cell">
+                            {appt.scheduled_therapist}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Notes */}
           {view === 'notes' && (
             <div>
               <div className="relative mb-3">
-                <h2 className="text-xl font-semibold text-center text-[#183234]">
+                <h2 className="emr-section-title mb-0">
                   Notes
                 </h2>
 
@@ -260,31 +260,31 @@ function PatientWindow() {
                 <button
                   type="button"
                   onClick={openNewNoteWindow}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 px-3 py-2 bg-[#0F777A] text-white rounded text-sm font-medium hover:bg-[#0A6264]"
+                  className="emr-primary-button absolute right-0 top-1/2 -translate-y-1/2 text-sm"
                 >
                   New Note
                 </button>
               </div>
 
               {notes.length === 0 ? (
-                <p className="text-center text-[#536C6E]">
+                <p className="emr-empty-message">
                   No notes found.
                 </p>
               ) : (
-                <div className="max-h-[430px] overflow-y-auto border border-[#97B5B5] rounded-lg bg-[#F4F8F8]">
-                  <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-[#B9D0D0] text-[#183234]">
+                <div className="emr-table-container">
+                  <table className="emr-table">
+                    <thead className="emr-table-header">
                       <tr>
-                        <th className="px-4 py-3 text-center font-semibold">
+                        <th className="emr-table-heading">
                           Date
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold">
+                        <th className="emr-table-heading">
                           Time
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold">
+                        <th className="emr-table-heading">
                           Therapist
                         </th>
-                        <th className="px-4 py-3 text-center font-semibold">
+                        <th className="emr-table-heading">
                           Note
                         </th>
                       </tr>
@@ -294,7 +294,7 @@ function PatientWindow() {
                       {notes.map((note) => (
                         <tr
                           key={note.note_id}
-                          className="border-t border-[#97B5B5] cursor-pointer hover:bg-[#C9E0E0]"
+                          className="emr-table-row cursor-pointer"
                           // open selected note in new window using route in app.jsx
                           onClick={() =>
                             window.open(
@@ -304,22 +304,22 @@ function PatientWindow() {
                             )
                           }
                         >
-                          <td className="px-4 py-3 text-center">
+                          <td className="emr-table-cell">
                             {new Date(note.created_at).toLocaleDateString()}
                           </td>
 
-                          <td className="px-4 py-3 text-center">
+                          <td className="emr-table-cell">
                             {new Date(note.created_at).toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
                           </td>
 
-                          <td className="px-4 py-3 text-center">
+                          <td className="emr-table-cell">
                             {note.signed_therapist}
                           </td>
 
-                          <td className="px-4 py-3 text-center text-[#0F777A] font-medium">
+                          <td className="emr-table-cell text-emr-primary font-medium">
                             View
                           </td>
                         </tr>
