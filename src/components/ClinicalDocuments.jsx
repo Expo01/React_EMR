@@ -35,7 +35,7 @@ function ClinicalDocuments({ documents, patientId }) {
                 <tr
                   key={document.document_id}
                   onClick={() => openDocument(document.document_id)}
-                  className="emr-table-row cursor-pointer"
+                  className="emr-table-row-action"
                 >
                   <td className="emr-table-cell">
                     {document.document_type}

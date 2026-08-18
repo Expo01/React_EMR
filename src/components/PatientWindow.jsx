@@ -284,9 +284,6 @@ function PatientWindow() {
                         <th className="emr-table-heading">
                           Therapist
                         </th>
-                        <th className="emr-table-heading">
-                          Note
-                        </th>
                       </tr>
                     </thead>
 
@@ -294,15 +291,23 @@ function PatientWindow() {
                       {notes.map((note) => (
                         <tr
                           key={note.note_id}
-                          className="emr-table-row cursor-pointer"
+                          className="emr-table-row-action"
                           // open selected note in new window using route in app.jsx
-                          onClick={() =>
-                            window.open(
-                              `/note/${note.note_id}`,
-                              '_blank',
-                              'width=800,height=600'
-                            )
-                          }
+                          onClick={() => {
+                            if (note.is_signed) {
+                              window.open(
+                                `/note/${note.note_id}`,
+                                '_blank',
+                                'width=800,height=600'
+                              );
+                            } else {
+                              window.open(
+                                `/patient/${id}/note/${note.note_id}/edit`,
+                                '_blank',
+                                'width=800,height=700'
+                              );
+                            }
+                          }}
                         >
                           <td className="emr-table-cell">
                             {new Date(note.created_at).toLocaleDateString()}
@@ -316,11 +321,7 @@ function PatientWindow() {
                           </td>
 
                           <td className="emr-table-cell">
-                            {note.signed_therapist}
-                          </td>
-
-                          <td className="emr-table-cell text-emr-primary font-medium">
-                            View
+                            {note.signed_therapist || 'Draft'}
                           </td>
                         </tr>
                       ))}

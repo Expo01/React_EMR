@@ -29,6 +29,8 @@ function App() {
 
         {/* generate new note */}
         <Route path="/patient/:patientId/note/new"element={<MinimalLayout><NoteWriter /></MinimalLayout>}/>
+        <Route path="/patient/:patientId/note/:noteId/edit"element={<MinimalLayout><NoteWriter /></MinimalLayout>}
+/>
         {/* edit medications */}
         <Route path="/patient/:patientId/medications/edit"element={<MinimalLayout><MedicationWriter /></MinimalLayout>}/>
         <Route path="/patient/:patientId/document/:documentId"element={<MinimalLayout><ClinicalDocumentViewer /></MinimalLayout>

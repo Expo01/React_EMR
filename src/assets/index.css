@@ -139,6 +139,21 @@ body {
   .emr-error-text {
     @apply text-emr-error;
   }
+
+  /* Standard non-interactive table row */
+  .emr-table-row {
+  @apply border-t border-emr-border;
+  }
+
+  /* Non-clickable row with visual focus feedback */
+  .emr-table-row-focus {
+    @apply border-t border-emr-border hover:bg-emr-row-hover;
+  }
+
+  /* Clickable table row */
+  .emr-table-row-action {
+    @apply border-t border-emr-border cursor-pointer hover:bg-emr-row-hover;
+  }
 }
 
 

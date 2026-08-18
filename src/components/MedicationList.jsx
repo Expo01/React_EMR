@@ -45,7 +45,7 @@ function MedicationList({ medications, patientId }) {
               {medications.map((medication) => (
                 <tr
                   key={medication.medication_id}
-                  className="emr-table-row"
+                  className="emr-table-row-focus"
                 >
                   <td className="emr-table-cell font-medium">
                     {medication.medication_name}

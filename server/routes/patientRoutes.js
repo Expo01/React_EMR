@@ -78,7 +78,7 @@ router.get('/appointments/:patientId', async (req, res) => {
   }
 });
 
-// create/save a new note
+// create a new note draft
 router.post('/notes', async (req, res) => {
   const { patient_id, content } = req.body;
 
@@ -91,17 +91,141 @@ router.post('/notes', async (req, res) => {
   try {
     const result = await pool.query(
       `
-      INSERT INTO notes (patient_id, content, created_at)
-      VALUES ($1, $2, NOW())
+      INSERT INTO notes (
+        patient_id,
+        content,
+        created_at,
+        is_signed
+      )
+      VALUES ($1, $2, NOW(), FALSE)
       RETURNING *
       `,
       [patient_id, content.trim()]
     );
 
     res.status(201).json(result.rows[0]);
+
   } catch (err) {
-    console.error('Error creating note:', err);
-    res.status(500).json({ error: 'Failed to create note' });
+    console.error('Error creating note draft:', err);
+    res.status(500).json({
+      error: 'Failed to create note draft',
+    });
+  }
+});
+
+// update an unsigned note draft
+router.patch('/notes/:noteId', async (req, res) => {
+  const { noteId } = req.params;
+  const { content } = req.body;
+
+  if (!content?.trim()) {
+    return res.status(400).json({
+      error: 'Note content is required',
+    });
+  }
+
+  try {
+    // Check that the note exists and has not already been signed
+    const existingNote = await pool.query(
+      `
+      SELECT is_signed
+      FROM notes
+      WHERE note_id = $1
+      `,
+      [noteId]
+    );
+
+    if (existingNote.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Note not found',
+      });
+    }
+
+    if (existingNote.rows[0].is_signed) {
+      return res.status(409).json({
+        error: 'Signed notes cannot be edited',
+      });
+    }
+
+    const result = await pool.query(
+      `
+      UPDATE notes
+      SET content = $1
+      WHERE note_id = $2
+      RETURNING *
+      `,
+      [content.trim(), noteId]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error('Error updating note draft:', err);
+    res.status(500).json({
+      error: 'Failed to update note draft',
+    });
+  }
+});
+
+// sign and lock a note
+router.patch('/notes/:noteId/sign', async (req, res) => {
+  const { noteId } = req.params;
+  const { content, signed_therapist } = req.body;
+
+  if (!content?.trim() || !signed_therapist?.trim()) {
+    return res.status(400).json({
+      error: 'Note content and signing clinician are required',
+    });
+  }
+
+  try {
+    // Check that the note exists and has not already been signed
+    const existingNote = await pool.query(
+      `
+      SELECT is_signed
+      FROM notes
+      WHERE note_id = $1
+      `,
+      [noteId]
+    );
+
+    if (existingNote.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Note not found',
+      });
+    }
+
+    if (existingNote.rows[0].is_signed) {
+      return res.status(409).json({
+        error: 'Note is already signed and locked',
+      });
+    }
+
+    const result = await pool.query(
+      `
+      UPDATE notes
+      SET
+        content = $1,
+        signed_therapist = $2,
+        signed_at = NOW(),
+        is_signed = TRUE
+      WHERE note_id = $3
+      RETURNING *
+      `,
+      [
+        content.trim(),
+        signed_therapist.trim(),
+        noteId,
+      ]
+    );
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error('Error signing note:', err);
+    res.status(500).json({
+      error: 'Failed to sign note',
+    });
   }
 });
 
@@ -206,8 +330,6 @@ router.delete('/medications/:medicationId', async (req, res) => {
   }
 });
 
-module.exports = router;
-
 // retrieve clinical docs for a patient
 router.get("/clinical-documents/:patientId", async (req, res) => {
   try {
@@ -255,3 +377,5 @@ router.get("/clinical-documents/document/:documentId", async (req, res) => {
     });
   }
 });
+
+module.exports = router;
