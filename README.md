@@ -227,28 +227,32 @@ The patient directory provides the entry point into the EMR. Selecting a patient
 
 Each patient workspace provides access to appointments, clinical notes, medications, and external clinical documents from a single patient context. Patient identification remains visible throughout the workspace to reduce ambiguity while navigating clinical information.
 
-<!-- Insert patient workspace screenshot here -->
+![Patient workspace](screenshots/patient-workspace.png)
 
 
 ### Clinical Documentation
 
 Clinicians can create and save draft notes, reopen drafts for continued editing, and formally sign and submit completed documentation. Signed notes are timestamped and locked against further editing, separating incomplete documentation from the finalized clinical record.
 
-<!-- Insert Note Writer screenshot here -->
+![Clinical note authoring and signing workflow](screenshots/note-writer.png)
 
 
 ### Medication Reconciliation
 
 Patient-specific medication lists display medication name, strength, dose, dosage form, route, frequency, and additional instructions. A separate editing workflow allows medications to be added or removed while keeping the medication list available within the patient workspace.
 
-<!-- Insert medication list screenshot here -->
+![Patient medication list](screenshots/medication-list.png)
 
 
 ### Multi-Window Patient Workflow
 
-The core workflow allows clinicians to open multiple resources for the same patient simultaneously, such as documenting a visit while referencing an external hospital discharge summary. Patient access controls prevent a different patient's chart from being opened concurrently, preserving the efficiency of multi-window documentation while reducing wrong-chart risk.
+The application allows clinicians to open multiple resources for the same patient simultaneously, such as documenting a visit while referencing an external hospital discharge summary.
 
-<!-- Insert multi-window Note Writer + clinical document screenshot here -->
+![Same-patient multi-window workflow](screenshots/multi-window-workflow.png)
+
+Attempting to open a different patient's chart while another patient remains active is blocked, reducing the risk of documentation occurring in the wrong patient context.
+
+![Cross-patient access restriction](screenshots/access-restriction.png)
 
 ---
 
