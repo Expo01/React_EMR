@@ -2,41 +2,38 @@
 
 ## Overview
 
-This project is a full-stack Electronic Medical Record (EMR) prototype built using React, Node.js, Express, and PostgreSQL.
+This project is a full-stack Electronic Medical Record (EMR) workflow prototype built using React, Node.js, Express, and PostgreSQL.
 
-Rather than recreating a traditional CRUD application, the project focuses on solving a specific clinician workflow problem encountered in home health and outpatient documentation.
+Rather than attempting to recreate a complete production EMR, the project focuses on a specific clinician workflow and patient-safety problem encountered in home health and outpatient documentation.
 
-Many current EMR systems restrict clinicians to a single active patient chart, encouraging unsafe workarounds such as photographing medication lists or repeatedly switching between patient records and historical documentation. This prototype explores an alternative workflow that allows multiple windows for the same patient while preventing simultaneous access to different patient charts.
+Traditional single-window workflows can make it difficult to reference previous documentation, medication lists, and source documents while documenting care. This can encourage inefficient or insecure workarounds. This prototype explores an alternative workflow that allows multiple windows for the same patient while preventing simultaneous access to different patient charts.
 
 ---
 
 ## Problem
 
-Current clinician workflows often require referencing multiple documents while documenting patient care.
+Clinical documentation often requires clinicians to reference multiple sources while actively documenting patient care.
 
 Examples include:
 
 - Reviewing previous notes while writing a new note.
-- Performing medication reconciliation using an external medication list.
-- Switching repeatedly between documentation screens.
+- Performing medication reconciliation while referencing an external medication source document.
+- Reviewing appointments or other patient information without leaving the current documentation workflow.
+- Moving repeatedly between different areas of the same patient record.
 
-These limitations reduce efficiency and increase the risk of documenting in the wrong patient's chart.
+Restricting these tasks to a single active window creates unnecessary context switching. Allowing unrestricted multi-window access, however, introduces the risk of simultaneously working in different patient charts and documenting information in the wrong record.
 
 ---
 
 ## Solution
 
-The application is designed around a patient-centered workspace.
+The application uses a patient-centered multi-window workflow.
 
-Current functionality allows clinicians to:
+Clinicians can open multiple resources belonging to the same patient in separate windows, allowing reference information to remain visible during documentation.
 
-- Browse a patient directory.
-- Open a dedicated patient workspace.
-- View appointments and clinical notes for the selected patient.
-- Open individual notes in separate windows while maintaining patient identification.
-- Retrieve only patient-specific records from the database.
+A patient access guard tracks the active patient context and prevents a different patient's chart from being opened while windows associated with the current patient remain active.
 
-Future work will restrict concurrent viewing of different patient charts while allowing multiple windows for the same patient.
+This provides the flexibility of multi-window documentation while preserving a clear patient boundary.
 
 ---
 
@@ -44,28 +41,28 @@ Future work will restrict concurrent viewing of different patient charts while a
 
 ### Implemented
 
-- Patient directory
-- Dedicated patient workspace
-- Patient-specific appointment retrieval
-- Patient-specific note retrieval
-- Toggle between appointments and notes
-- Individual note viewer
-- Sticky patient identification header
-- Multiple note windows for the selected patient
+- Patient directory and dedicated patient workspaces
+- Patient-specific retrieval of appointments, notes, medications, and clinical documents
+- Multi-window access to resources belonging to the same patient
+- Cross-patient access guard preventing simultaneous workflows across different patient charts
+- Clinical note creation and draft saving
+- Reopening and editing existing draft notes
+- Note signing with clinician identification and timestamp
+- Backend-enforced locking of signed notes
+- Read-only viewing of signed clinical notes
+- Medication list viewing and editing
+- Clinical source-document viewing
+- Patient identification maintained across documentation and reference windows
+- Standardized clinical data tables and application-wide UI styling
 - React frontend with Express REST API and PostgreSQL backend
 
-### In Progress
+### In Progress / Potential Extensions
 
-- Appointment calendar
-- Note authoring and signing workflow
-- Patient profile page
+- Functional appointment calendar
+- Cloud storage for uploaded clinical documents
+- Authentication and role-based clinician identity
 
-### Planned
-
-- Medication reconciliation workflow
-- Medication source document viewer
-- Cross-patient access restrictions
-- Authentication and user roles
+These features are potential extensions rather than requirements for the core workflow prototype.
 
 ---
 
@@ -105,6 +102,8 @@ Future work will restrict concurrent viewing of different patient charts while a
 - content
 - created_at
 - signed_therapist
+- is_signed
+- signed_at
 
 ### appointments
 
@@ -112,7 +111,79 @@ Future work will restrict concurrent viewing of different patient charts while a
 - patient_id (FK)
 - scheduled_date
 - scheduled_time
-- signed_therapist
+- scheduled_therapist
+
+### medications
+
+- medication_id (PK)
+- patient_id (FK)
+- medication_name
+- strength
+- dose
+- dosage_form
+- route
+- frequency
+- instructions
+
+### clinical_documents
+
+- document_id (PK)
+- patient_id (FK)
+- document_type
+- document_name
+- file_path
+- uploaded_at
+
+---
+
+## Note Workflow
+
+Clinical notes follow a simple documentation lifecycle:
+
+```text
+Create Note
+    │
+    ▼
+Save Draft
+    │
+    ▼
+Reopen / Edit Draft
+    │
+    ▼
+Sign and Submit
+    │
+    ▼
+Signed + Timestamped
+    │
+    ▼
+Read-Only / Locked
+```
+
+Signed-note locking is enforced by the backend rather than relying only on frontend controls.
+
+---
+
+## Multi-Window Patient Safety Workflow
+
+```text
+Patient A Workspace
+        │
+        ├── Previous Note Window
+        ├── New / Draft Note Window
+        ├── Medication List
+        └── Clinical Document
+                 │
+                 ▼
+        Same patient context allowed
+
+Patient B Workspace
+        │
+        ▼
+Blocked while Patient A
+workflow remains active
+```
+
+This restriction is the central workflow decision explored by the project.
 
 ---
 
@@ -121,35 +192,63 @@ Future work will restrict concurrent viewing of different patient charts while a
 ```text
 React Frontend
         │
-HTTP Requests
-        │
+        │ HTTP / JSON
+        ▼
 Express REST API
         │
+        ▼
 PostgreSQL
-        │
-JSON Response
-        │
-React UI
 ```
+
+Patient-specific foreign-key relationships and API queries keep clinical information associated with the appropriate patient record.
 
 ---
 
-## Future Direction
+## Project Scope
 
-The long-term goal is not to build a production EMR, but to demonstrate thoughtful software design around a real healthcare workflow problem.
+The goal of this project is not to build a production-ready EMR or reproduce every feature found in a commercial healthcare platform.
 
-Future development will focus on:
+Instead, it demonstrates the implementation of a focused workflow concept: allowing clinicians to use multiple windows when working within one patient record while preventing simultaneous cross-patient workflows.
 
-- Safe concurrent documentation
-- Medication reconciliation
-- Multi-window workflow for a single patient
-- Preventing simultaneous access to different patient charts
+The prototype combines clinical workflow considerations with full-stack software design, including patient-scoped data retrieval, relational data modeling, stateful documentation workflows, backend-enforced note locking, and frontend access controls.
 
 ---
 
 ## Screenshots
 
-(Add later...)
+### Patient Directory
+
+The patient directory provides the entry point into the EMR. Selecting a patient opens a dedicated patient workspace while preserving the application's patient-specific routing and data isolation.
+
+![Patient directory](screenshots/patient-directory.png)
+
+
+### Patient Workspace
+
+Each patient workspace provides access to appointments, clinical notes, medications, and external clinical documents from a single patient context. Patient identification remains visible throughout the workspace to reduce ambiguity while navigating clinical information.
+
+<!-- Insert patient workspace screenshot here -->
+
+
+### Clinical Documentation
+
+Clinicians can create and save draft notes, reopen drafts for continued editing, and formally sign and submit completed documentation. Signed notes are timestamped and locked against further editing, separating incomplete documentation from the finalized clinical record.
+
+<!-- Insert Note Writer screenshot here -->
+
+
+### Medication Reconciliation
+
+Patient-specific medication lists display medication name, strength, dose, dosage form, route, frequency, and additional instructions. A separate editing workflow allows medications to be added or removed while keeping the medication list available within the patient workspace.
+
+<!-- Insert medication list screenshot here -->
+
+
+### Multi-Window Patient Workflow
+
+The core workflow allows clinicians to open multiple resources for the same patient simultaneously, such as documenting a visit while referencing an external hospital discharge summary. Patient access controls prevent a different patient's chart from being opened concurrently, preserving the efficiency of multi-window documentation while reducing wrong-chart risk.
+
+<!-- Insert multi-window Note Writer + clinical document screenshot here -->
 
 ---
 
@@ -171,10 +270,12 @@ npm start
 ```
 
 Frontend:
-http://localhost:5173
+
+`http://localhost:5173`
 
 Backend:
-http://localhost:3001
+
+`http://localhost:3001`
 
 ---
 
