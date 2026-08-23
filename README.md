@@ -73,11 +73,16 @@ These features are potential extensions rather than requirements for the core wo
 - React
 - Vite
 - Tailwind CSS
+- Vitest
+- React Testing Library
+- jsdom
 
 ### Backend
 
 - Node.js
 - Express
+- Jest
+- Supertest
 
 ### Database
 
@@ -210,7 +215,76 @@ The goal of this project is not to build a production-ready EMR or reproduce eve
 
 Instead, it demonstrates the implementation of a focused workflow concept: allowing clinicians to use multiple windows when working within one patient record while preventing simultaneous cross-patient workflows.
 
-The prototype combines clinical workflow considerations with full-stack software design, including patient-scoped data retrieval, relational data modeling, stateful documentation workflows, backend-enforced note locking, and frontend access controls.
+The prototype combines clinical workflow considerations with full-stack software design, including patient-scoped data retrieval, relational data modeling, stateful documentation workflows, backend-enforced note locking, frontend access controls, and automated testing of core workflow behaviors.
+
+---
+
+## Testing
+
+Automated tests focus on the workflow, data-isolation, and record-integrity behaviors central to the prototype.
+
+### Backend Integration Testing
+
+Backend integration tests use Jest and Supertest against an isolated PostgreSQL test database. Test data is created specifically for each suite and removed after execution, preventing tests from modifying the populated demonstration database.
+
+Backend tests cover:
+
+- Patient-specific note retrieval
+- Draft note creation and editing
+- Note signing and backend-enforced locking
+- Note validation and error handling
+- Patient-specific medication retrieval
+- Medication creation, validation, and deletion
+- Patient-specific clinical-document retrieval
+- Clinical-document metadata retrieval
+- Patient retrieval and error handling
+- Patient-specific appointment retrieval and chronological ordering
+
+Run backend tests from the `server` directory:
+
+```bash
+npm test
+```
+
+### Frontend Workflow Testing
+
+Frontend tests use Vitest, React Testing Library, and jsdom to validate the patient access guard.
+
+Tests verify that:
+
+- The first patient establishes the active patient context
+- Multiple windows for the same patient are allowed
+- A different patient is blocked while another patient remains active
+- Closing one same-patient window preserves the active context when other windows remain
+- Closing the final window releases the patient restriction
+- A different patient can then establish a new active context
+
+Run frontend tests from the project root:
+
+```bash
+npm test
+```
+
+Together, these suites provide automated regression testing for the patient-scoped data access, documentation lifecycle, and cross-patient workflow restrictions central to the prototype.
+
+---
+
+## Clinician Workflow Feedback
+
+The prototype is being reviewed with practicing physical therapists using simulated clinical workflows and synthetic patient data.
+
+Feedback sessions focus on:
+
+- Usability of the patient-centered workspace
+- Usefulness of simultaneous same-patient windows during documentation
+- Medication reconciliation and source-document workflows
+- Clarity of note creation, draft editing, and signing
+- Practical impact of the cross-patient access restriction
+- Workflow friction, missing information, and unexpected behavior
+
+**Feedback summary:** To be added following completion of clinician workflow reviews.
+
+**Changes resulting from feedback:** To be added as feedback is evaluated and incorporated.
 
 ---
 
