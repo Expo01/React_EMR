@@ -1,9 +1,10 @@
+import { openWorkingWindow } from '../utils/openEmrWindow';
+
 function MedicationList({ medications, patientId }) {
+  // Open medication editing window on the right side of the screen
   const openMedicationWriter = () => {
-    window.open(
-      `/patient/${patientId}/medications/edit`,
-      '_blank',
-      'width=900,height=700'
+    openWorkingWindow(
+      `/patient/${patientId}/medications/edit`
     );
   };
 

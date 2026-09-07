@@ -1,11 +1,10 @@
+import { openReferenceWindow } from '../utils/openEmrWindow';
 // view list of all clinical docs for a patient
 
 function ClinicalDocuments({ documents, patientId }) {
   const openDocument = (documentId) => {
-    window.open(
-      `/patient/${patientId}/document/${documentId}`,
-      '_blank',
-      'width=900,height=700'
+    openReferenceWindow(
+      `/patient/${patientId}/document/${documentId}`
     );
   };
 

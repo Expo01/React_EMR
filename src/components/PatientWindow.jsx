@@ -4,6 +4,10 @@ import usePatientAccessGuard from '../hooks/usePatientAccessGuard';
 //patientappointments and patientnotes jsx files to be extracted later as is medicationlist
 import MedicationList from './MedicationList';
 import ClinicalDocuments from './ClinicalDocuments';
+import {
+  openReferenceWindow,
+  openWorkingWindow
+} from '../utils/openEmrWindow';
 
 function PatientWindow() {
   const { id } = useParams(); // Get patient ID from URL
@@ -14,14 +18,10 @@ function PatientWindow() {
   const [medications, setMedications] = useState([]);
   const [documents, setDocuments] = useState([]);
 
-  // helper functions
-  const openNewNoteWindow = () => {
-    window.open(
-      `/patient/${id}/note/new`,
-      '_blank',
-      'width=800,height=700'
-    );
-  };
+// Open new-note writing window on the right side of the screen
+const openNewNoteWindow = () => {
+  openWorkingWindow(`/patient/${id}/note/new`);
+};
 
   //data fetching
   useEffect(() => {
@@ -290,25 +290,22 @@ function PatientWindow() {
                     <tbody>
                       {notes.map((note) => (
                         <tr
-                          key={note.note_id}
-                          className="emr-table-row-action"
-                          // open selected note in new window using route in app.jsx
-                          onClick={() => {
-                            if (note.is_signed) {
-                              window.open(
-                                `/note/${note.note_id}`,
-                                '_blank',
-                                'width=800,height=600'
-                              );
-                            } else {
-                              window.open(
-                                `/patient/${id}/note/${note.note_id}/edit`,
-                                '_blank',
-                                'width=800,height=700'
-                              );
-                            }
-                          }}
-                        >
+                        key={note.note_id}
+                        className="emr-table-row-action"
+                        // Signed notes open as references on the left.
+                        // Draft notes open for editing on the right.
+                        onClick={() => {
+                          if (note.is_signed) {
+                            openReferenceWindow(
+                              `/note/${note.note_id}`
+                            );
+                          } else {
+                            openWorkingWindow(
+                              `/patient/${id}/note/${note.note_id}/edit`
+                            );
+                          }
+                        }}
+>
                           <td className="emr-table-cell">
                             {new Date(note.created_at).toLocaleDateString()}
                           </td>

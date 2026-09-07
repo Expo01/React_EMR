@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { openReferenceWindow } from '../utils/openEmrWindow';
 
 function Patients() {
   const [patients, setPatients] = useState([]);
@@ -11,20 +12,14 @@ function Patients() {
       .catch(err => console.error('Error fetching patients:', err));
   }, []);
 
-  // url opened for patient/:id and routing handled by app.jsx for new patient window
-  const openPatientInNewWindow = (id) => {
-    const win = window.open(
-      `/patient/${id}`,
-      '_blank',
-      'width=680,height=750'
-    );
+// url opened for patient/:id and routing handled by app.jsx for new patient window
+const openPatientInNewWindow = (id) => {
+  const win = openReferenceWindow(`/patient/${id}`);
 
-    if (win) {
-      win.focus();
-    } else {
-      alert('Popup blocked. Please allow popups for this site.');
-    }
-  };
+  if (!win) {
+    alert('Popup blocked. Please allow popups for this site.');
+  }
+};
 
   return (
     <div className="emr-workspace">
