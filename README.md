@@ -35,6 +35,8 @@ A patient access guard tracks the active patient context and prevents a differen
 
 This provides the flexibility of multi-window documentation while preserving a clear patient boundary.
 
+Following clinician workflow review, window placement was standardized around the role of each window. Navigation and reference content opens on the left side of the available workspace, while writing and editing workflows open on the right. This provides a usable default multi-window layout without requiring clinicians to manually resize and reposition windows before beginning documentation.
+
 ---
 
 ## Features
@@ -55,6 +57,7 @@ This provides the flexibility of multi-window documentation while preserving a c
 - Patient identification maintained across documentation and reference windows
 - Standardized clinical data tables and application-wide UI styling
 - React frontend with Express REST API and PostgreSQL backend
+- Workflow-based default window positioning with navigation/reference content on the left and writing/editing workflows on the right
 
 ### In Progress / Potential Extensions
 
@@ -248,7 +251,7 @@ npm test
 
 ### Frontend Workflow Testing
 
-Frontend tests use Vitest, React Testing Library, and jsdom to validate the patient access guard.
+Frontend tests use Vitest, React Testing Library, and jsdom to validate the patient access guard and workflow-based window positioning.
 
 Tests verify that:
 
@@ -258,6 +261,10 @@ Tests verify that:
 - Closing one same-patient window preserves the active context when other windows remain
 - Closing the final window releases the patient restriction
 - A different patient can then establish a new active context
+- Reference/navigation windows default to the left side of the available screen
+- Writing/editing windows default to the right side of the available screen
+- Window dimensions adapt to the available screen size
+- Popup-blocked behavior is handled without application failure
 
 Run frontend tests from the project root:
 
@@ -271,20 +278,25 @@ Together, these suites provide automated regression testing for the patient-scop
 
 ## Clinician Workflow Feedback
 
-The prototype is being reviewed with practicing physical therapists using simulated clinical workflows and synthetic patient data.
+The prototype was reviewed with practicing physical therapists using simulated clinical workflows and synthetic patient data.
 
-Feedback sessions focus on:
+Two recurring workflow concerns were identified:
 
-- Usability of the patient-centered workspace
-- Usefulness of simultaneous same-patient windows during documentation
-- Medication reconciliation and source-document workflows
-- Clarity of note creation, draft editing, and signing
-- Practical impact of the cross-patient access restriction
-- Workflow friction, missing information, and unexpected behavior
+- **Window organization:** Although the prototype supported multiple windows, newly opened windows required manual resizing and repositioning. This introduced user effort before the multi-window workflow became useful.
+- **Tab organization:** Clinicians identified tabs as a useful way to organize multiple reference resources when more than one reference item needs to remain readily accessible.
 
-**Feedback summary:** To be added following completion of clinician workflow reviews.
+### Changes Resulting from Feedback
 
-**Changes resulting from feedback:** To be added as feedback is evaluated and incorporated.
+The window-opening workflow was redesigned around a consistent workspace model:
+
+- **Viewing and navigation → left side**
+- **Writing and editing → right side**
+
+Patient navigation, signed notes, medication lists, and clinical source documents therefore default to the left side of the available screen, while note authoring and medication editing default to the right.
+
+This creates a usable two-pane layout immediately when a working window is opened and reduces the manual window management required by the original implementation.
+
+Tab-based organization remains a potential extension for workflows requiring multiple simultaneously accessible reference resources rather than attempting to subdivide the available screen into increasingly small windows.
 
 ---
 
